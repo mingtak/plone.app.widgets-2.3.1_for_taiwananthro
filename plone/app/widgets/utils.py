@@ -147,7 +147,11 @@ def get_relateditems_options(context, value, separator, vocabulary_name,
         context = nav_root
 
     # basePath - start to search/browse in here.
-    base_path_context = context
+
+    current_path_context = context
+    current_path_context = aq_parent(current_path_context)
+
+    base_path_context = site['pub_image']
     if not IFolder.providedBy(base_path_context):
         base_path_context = aq_parent(base_path_context)
     if not base_path_context:
@@ -164,16 +168,22 @@ def get_relateditems_options(context, value, separator, vocabulary_name,
     # contextPath - current edited object. Will not be available to select.
     options['contextPath'] = '/'.join(context.getPhysicalPath())
 
-    if base_path_context != nav_root:
+    if True: #base_path_context != nav_root:
         options['favorites'] = [
             {
-                'title': _(u'Current Content'),
+                'title': _(u'Images Folder'),
                 'path': '/'.join(base_path_context.getPhysicalPath())
+            }, {
+                'title': _(u'Current Content'),
+                'path': '/'.join(current_path_context.getPhysicalPath())
             }, {
                 'title': _(u'Start Page'),
                 'path': '/'.join(nav_root.getPhysicalPath())
             }
         ]
+
+    base_path_context = site
+    options['basePath'] = '/%s' % base_path_context.getPhysicalPath()[1]
 
     if include_recently_added:
         # Options for recently used key
